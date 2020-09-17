@@ -1,13 +1,25 @@
-import transitionPath from './transitionPath'
+import transitionPath, { sliceName } from './transitionPath'
 import { State } from './transitionPath'
 
-export default function shouldUpdateNode(nodeName: string) {
+/**
+ *
+ * @param nodeName name of the node
+ * @param sliceFromleft  how much segments to slice (e.g. 'en.user.orders' with sliceFromLeft = 1 will become 'user.orders')
+ * @returns
+ */
+export default function shouldUpdateNode(nodeName: string, sliceFromleft = 0) {
     return (toState: State, fromSate: State): boolean => {
-        const {
+        let {
             intersection,
             toActivate,
             toDeactivate: toDeactivateReversed
         } = transitionPath(toState, fromSate)
+
+        intersection = sliceName(intersection, sliceFromleft)
+        toActivate = toActivate.map(sliceName).filter(value => value != '')
+        toDeactivateReversed = toDeactivateReversed
+            .map(sliceName)
+            .filter(value => value != '')
 
         const toDeactivate = [...toDeactivateReversed].reverse()
 

@@ -1,10 +1,11 @@
-import React, { ReactNode, SFC } from 'react'
-import { shouldUpdateNode } from 'router5-transition-path'
+import React, { ReactNode, FunctionComponent } from 'react'
+import { shouldUpdateNode, sliceName } from 'router5-transition-path'
 import { RouteContext } from '../types'
 import { routeContext } from '../context'
 
 export interface RouteNodeProps {
-    nodeName: string
+    nodeName: string,
+    sliceFromleft: number
     children: (routeContext: RouteContext) => ReactNode
 }
 
@@ -14,20 +15,20 @@ class RouteNodeRenderer extends React.Component<RouteNodeProps & RouteContext> {
     }
 
     shouldComponentUpdate(nextProps) {
-        return shouldUpdateNode(this.props.nodeName)(
+        return shouldUpdateNode(this.props.nodeName, this.props.sliceFromleft)(
             nextProps.route,
             nextProps.previousRoute
         )
     }
 
     render() {
-        const { router, route, previousRoute } = this.props
-
+        const { router, previousRoute, sliceFromleft } = this.props
+        const route = { ... this.props.route, name: sliceName(this.props.route.name, sliceFromleft)}
         return this.props.children({ router, route, previousRoute })
     }
 }
 
-const RouteNode: SFC<RouteNodeProps> = props => {
+const RouteNode: FunctionComponent<RouteNodeProps> = props => {
     return (
         <routeContext.Consumer>
             {routeContext => <RouteNodeRenderer {...props} {...routeContext} />}

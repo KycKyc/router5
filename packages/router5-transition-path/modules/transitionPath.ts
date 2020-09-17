@@ -24,6 +24,19 @@ export interface TransitionPath {
     toActivate: string[]
 }
 
+/**
+ *
+ * @param name name of the route
+ * @param sliceFromLeft how much segments to slice (e.g. 'en.user.orders' with sliceFromLeft = 1 will become 'user.orders')
+ * @returns
+ */
+export const sliceName = (name: string, sliceFromLeft: number) => {
+    return name
+        .split('.')
+        .slice(sliceFromLeft)
+        .join('.')
+}
+
 export const nameToIDs = (name: string): string[] =>
     name
         .split('.')
